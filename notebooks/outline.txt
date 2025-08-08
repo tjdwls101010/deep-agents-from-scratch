@@ -1,0 +1,18 @@
+0/ Lesson 0 - intro w Harrison/Lance
+1/ lesson 1 - [Slides only] overview on the common patterns of 
+   a. context isolation to sub agents, 
+   b. context offloading, 
+   c. todo list tool, 
+   d. task specific prompt eng. 
+      Context eng slides have many good citations for all. Plus the blog post. Should be quick.
+
+   lesson 2 - build an agent fast with create_react_agent. Demo LangSmith, Studio in simple environment.
+
+2/ lesson 3 - todo tool / planning. Easy.
+
+3/ lesson 4 - filesystem tool. Btw this is p cool and novel. It’s smtg we chatted abt. Mock filesystem in Langgraph state is nice shortcut.
+
+4/ lesson 5 - subagent delegation. Also a bit novel how it does it; let’s supervisor define the subagent on the fly (tools, name, prompt). whereas for DR we carefully define subagent tools / system prompt, and only let supervisor define the research topic for each. This is more flexible, am curious on performance.
+
+5/ lesson 6 - prompting + applying to task (like DR).  But ofc general is the story here.
+Btw another little tip I’ve started doing is using a think_tool. Extremely useful. Claude interleaves thinking w/ tool calls. Can see it’s though process and understand failures. Super helpful.
