@@ -1,5 +1,12 @@
-0/ Lesson 0 - intro w Harrison/Lance
-1/ lesson 1 - [Slides only] overview on the common patterns of 
+Highlights:
+- long-running agents need ability to backup vs starting from scratch. Langgraph can provide that.
+   - requires complete snapshots in state - requires 'files' be state, or files must be more sophisticated..
+- fast/easy to create an agent
+
+
+
+Lesson 0 - intro w Harrison/Lance
+lesson 1 - [Slides only] overview on the common patterns of 
    a. context isolation to sub agents, 
    b. context offloading, 
    c. todo list tool, 
@@ -7,12 +14,24 @@
       Context eng slides have many good citations for all. Plus the blog post. Should be quick.
 
    lesson 2 - build an agent fast with create_react_agent. Demo LangSmith, Studio in simple environment.
+      notebook: 1_react_agent.ipynb
 
-2/ lesson 3 - todo tool / planning. Easy.
+lesson 3 - todo tool / planning. Easy.
+      notebook: 2_react_agent_w_todo.ipynb
+      - Keep todo in state
 
-3/ lesson 4 - filesystem tool. Btw this is p cool and novel. It’s smtg we chatted abt. Mock filesystem in Langgraph state is nice shortcut.
+lesson 4 - filesystem tool. Btw this is p cool and novel. It’s smtg we chatted abt. Mock filesystem in Langgraph state is nice shortcut.
+      notebook: 3_react_agent_w_files.ipynb
+      - Keep file system in state - use it to backtrack/restart
+      
+lesson 5 - subagent delegation. Also a bit novel how it does it; let’s supervisor define the subagent on the fly (tools, name, prompt). whereas for DR we carefully		     define subagent tools / system prompt, and only let supervisor define the research topic for each. This is more flexible, am curious on performance.
+      notebook: 4_react_agent_w_subagents.ipynb
 
-4/ lesson 5 - subagent delegation. Also a bit novel how it does it; let’s supervisor define the subagent on the fly (tools, name, prompt). whereas for DR we carefully define subagent tools / system prompt, and only let supervisor define the research topic for each. This is more flexible, am curious on performance.
 
-5/ lesson 6 - prompting + applying to task (like DR).  But ofc general is the story here.
-Btw another little tip I’ve started doing is using a think_tool. Extremely useful. Claude interleaves thinking w/ tool calls. Can see it’s though process and understand failures. Super helpful.
+lesson 6 - prompting + applying to task (like DR).  But ofc general is the story here.
+   	       Btw another little tip I’ve started doing is using a think_tool. Extremely useful.
+	       Claude interleaves thinking w/ tool calls. Can see it’s though process and understand failures. Super helpful.
+      notebook: 5_deep_agent.ipynb
+
+
+note: may renumber the notebooks to match lessons. For now, number to keep sequence.

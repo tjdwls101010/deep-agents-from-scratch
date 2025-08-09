@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+      "studio_react_agent": "./src/deep-agents-from-scratch/studio_react_agent.py:agent",
+      "react_agent":        "./src/deep-agents-from-scratch/react_agent.py:agent"
+  },
+  "env": ".env"
+}
