@@ -1,37 +1,58 @@
 Highlights:
-- long-running agents need ability to backup vs starting from scratch. Langgraph can provide that.
-   - requires complete snapshots in state - requires 'files' be state, or files must be more sophisticated..
-- fast/easy to create an agent
+- Rise of general purpose agents, such as Manus, Claude Code, etc.
+- Common patterns involve a few context engineering techniques:
+  - Isolating context to sub agents
+  - Offloading context to files
+  - Using a todo list tool for planning w/ recitation
+  - Task specific prompt engineering
 
+- Claude Code uses agentic search with simples tools like search, read, and edit
+⏺ Search(pattern: "write_todos")
+  ⎿  Found 3 files (ctrl+r to expand)
+⏺ Read(src/deepagents/tools.py)
+  ⎿  Read 150 lines (ctrl+r to expand)
+⏺ Read(src/deepagents/prompts.py)
+  ⎿  Read 278 lines (ctrl+r to expand)
+⏺ Read(src/deepagents/state.py)
+  ⎿  Read 26 lines (ctrl+r to expand)
 
+Lesson 0 - Intro  
+Intro w Harrison/Lance
 
-Lesson 0 - intro w Harrison/Lance
-lesson 1 - [Slides only] overview on the common patterns of 
-   a. context isolation to sub agents, 
-   b. context offloading, 
-   c. todo list tool, 
-   d. task specific prompt eng. 
-      Context eng slides have many good citations for all. Plus the blog post. Should be quick.
+Lesson 1 [Slides only] - Context 
+- Common patterns involve a few context engineering techniques:
+  - Isolating context to sub agents
+  - Offloading context to files
+  - Using a todo list tool for planning w/ recitation
+  - Task specific prompt engineering
 
-   lesson 2 - build an agent fast with create_react_agent. Demo LangSmith, Studio in simple environment.
-      notebook: 1_react_agent.ipynb
+Lesson 2 
+- Build an agent fast with create_react_agent
+- Give it built-in Tools focused on planning  
+  built_in_tools = [write_todos]
+- write_todos - Task planning and progress tracking
+- create_react_agent and pass it the write_todos tool
 
-lesson 3 - todo tool / planning. Easy.
-      notebook: 2_react_agent_w_todo.ipynb
-      - Keep todo in state
+Lesson 3 
+- Give it built-in Tools focused on writing (write_file, read_file, ls, edit_file)
+  - File system tools (write_file, read_file, ls, edit_file) - Virtual file operations on LangGraph state
+  - Keep file system in state - use it to backtrack/restart
+- create_react_agent and pass it the write_file, read_file, ls, edit_file tools
 
-lesson 4 - filesystem tool. Btw this is p cool and novel. It’s smtg we chatted abt. Mock filesystem in Langgraph state is nice shortcut.
-      notebook: 3_react_agent_w_files.ipynb
-      - Keep file system in state - use it to backtrack/restart
-      
-lesson 5 - subagent delegation. Also a bit novel how it does it; let’s supervisor define the subagent on the fly (tools, name, prompt). whereas for DR we carefully		     define subagent tools / system prompt, and only let supervisor define the research topic for each. This is more flexible, am curious on performance.
-      notebook: 4_react_agent_w_subagents.ipynb
+Lesson 4 - 
+- Give it Tool focus on tasks 
+- task_tool = _create_task_tool(
+      list(tools) + built_in_tools,
+      instructions,
+      subagents or [],
+      model,
+      state_schema
+  )
+- Sub-agent spawning for context quarantine
+- Task delegation to specialized agents
+- Access to a default "general-purpose" subagent plus any custom subagents
+- Create sub-agent and run it in isolation 
 
-
-lesson 6 - prompting + applying to task (like DR).  But ofc general is the story here.
-   	       Btw another little tip I’ve started doing is using a think_tool. Extremely useful.
-	       Claude interleaves thinking w/ tool calls. Can see it’s though process and understand failures. Super helpful.
-      notebook: 5_deep_agent.ipynb
-
-
-note: may renumber the notebooks to match lessons. For now, number to keep sequence.
+Lesson 5 - 
+- Custom tool (search)
+- Pass search, sub-agent, todo, and writing tools to create_react_agent
