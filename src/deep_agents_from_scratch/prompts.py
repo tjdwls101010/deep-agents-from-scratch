@@ -4,19 +4,44 @@ This module contains all the system prompts, tool descriptions, and instruction
 templates used throughout the deep agents educational framework.
 """
 
-WRITE_TODOS_DESCRIPTION = """Use this tool to create and manage a structured task list for your current work session. This helps you track progress, organize complex tasks, and demonstrate thoroughness to the user.
+# TODO(Claude): Just clean this up slightly in terms for formatting, but keep the content. 
+WRITE_TODOS_DESCRIPTION = """
+When to Use:
+- Use for multi-step or non-trivial tasks.
+- Create when the user gives multiple tasks, or explicitly asks for a todo list.
+- Avoid for single, trivial actions.
 
-## When to Use This Tool
-Use this tool proactively in these scenarios:
-1. Complex multi-step tasks - When a task requires 3 or more distinct steps or actions
-2. Non-trivial and complex tasks - Tasks that require careful planning or multiple operations
-3. User explicitly requests todo list - When the user directly asks you to use the todo list
-4. User provides multiple tasks - When users provide a list of things to be done
+How to Structure:
+- Keep one list containing multiple todo objects (content, status, id).
+- Use clear, actionable content text.
+- Status must be pending, in_progress, or completed.
 
-## Task States
-- pending: Task not yet started
-- in_progress: Currently working on (limit to ONE task at a time)
-- completed: Task finished successfully"""
+Best Practices:
+- Only one in_progress task at a time.
+- Mark completed as soon as the task is fully done.
+- Always send the full updated list when making changes.
+- Prune irrelevant items to keep the list short and focused.
+
+Progress Updates:
+- Call TodoWrite again to change a task’s status or edit its text.
+- Reflect real-time progress; don’t batch completions.
+- If blocked, keep in_progress and add a new task describing the blocker.
+
+Args:
+    TODOs: List of TODO items with content and status fields
+       
+Returns:
+    Adds TODOs to the agent state."""
+
+# TODO(Claude): See if we can improve this slightly for clarity. 
+TODO_USAGE_INSTRUCTIONS = """
+Based upon the user's request: 
+1. Use the write_todos tool to create TODO at the start of a user request, per the tool description.
+2. After you accomplish a TODO, use the read_todos to read the TODOs in order to remind yourself of the plan.
+3. Reflect on what you've done and the TODO. 
+4. Mark you task as completed, and proceed to the next TODO. 
+5. Continue this process until you have completed all TODOs. 
+"""
 
 LS_DESCRIPTION = """List all files in the virtual filesystem stored in agent state.
 
