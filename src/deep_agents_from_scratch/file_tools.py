@@ -1,27 +1,37 @@
 
-from langchain_core.tools import tool
-from typing_extensions import TypedDict, Annotated
-from langchain_core.messages import ToolMessage
+"""Virtual file system tools for agent context management.
+
+This module provides file operations (ls, read, write, edit) that operate on a virtual
+filesystem stored in LangGraph state, enabling context offloading and persistent memory.
+"""
 from typing import Annotated
-from langchain_core.tools import InjectedToolCallId
+
+from langchain_core.messages import ToolMessage
+from langchain_core.tools import InjectedToolCallId, tool
 from langgraph.prebuilt import InjectedState
 from langgraph.types import Command
+
+from deep_agents_from_scratch.prompts import (
+    EDIT_FILE_DESCRIPTION,
+    LS_DESCRIPTION,
+    READ_FILE_DESCRIPTION,
+    WRITE_FILE_DESCRIPTION,
+)
 from deep_agents_from_scratch.state import DeepAgentState
 
-@tool
+
+@tool(description=LS_DESCRIPTION)
 def ls(state: Annotated[DeepAgentState, InjectedState]) -> list[str]:
     """List all files in the virtual filesystem."""
-
     return list(state.get("files", {}).keys())
 
-@tool  
+@tool(description=READ_FILE_DESCRIPTION)
 def read_file(
     file_path: str,
     state: Annotated[DeepAgentState, InjectedState],
     offset: int = 0,
     limit: int = 2000,
 ) -> str:
-
     """Read file content with optional offset and limit."""
     files = state.get("files", {})
     if file_path not in files:
@@ -45,14 +55,13 @@ def read_file(
 
     return "\n".join(result_lines)
 
-@tool
+@tool(description=WRITE_FILE_DESCRIPTION)
 def write_file(
     file_path: str,
     content: str,
     state: Annotated[DeepAgentState, InjectedState],
     tool_call_id: Annotated[str, InjectedToolCallId],
 ) -> Command:
-
     """Write content to a file in the virtual filesystem."""
     files = state.get("files", {})
     files[file_path] = content
@@ -65,7 +74,7 @@ def write_file(
         }
     )
 
-@tool
+@tool(description=EDIT_FILE_DESCRIPTION)
 def edit_file(
     file_path: str,
     old_string: str,
@@ -74,7 +83,6 @@ def edit_file(
     tool_call_id: Annotated[str, InjectedToolCallId],
     replace_all: bool = False,
 ) -> Command:
-
     """Edit a file by replacing old_string with new_string."""
     files = state.get("files", {})
     if file_path not in files:
@@ -95,7 +103,7 @@ def edit_file(
     if not replace_all and content.count(old_string) > 1:
         return Command(
             update={"messages": [
-                ToolMessage(f"Error: String appears multiple times. Use replace_all=True", tool_call_id=tool_call_id)
+                ToolMessage("Error: String appears multiple times. Use replace_all=True", tool_call_id=tool_call_id)
             ]}
         )
 
