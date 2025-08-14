@@ -5,18 +5,18 @@ This module provides search and content processing utilities for the research ag
 including web search capabilities and content summarization tools.
 """
 
-import httpx
 from datetime import datetime
-from typing_extensions import Annotated, Literal
 
-from langchain.chat_models import init_chat_model 
+import httpx
+from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, ToolMessage
-from langchain_core.tools import tool, InjectedToolCallId, InjectedToolArg
+from langchain_core.tools import InjectedToolArg, InjectedToolCallId, tool
 from langgraph.prebuilt import InjectedState
 from langgraph.types import Command
+from markdownify import markdownify
 from pydantic import BaseModel, Field
 from tavily import TavilyClient
-from markdownify import markdownify
+from typing_extensions import Annotated, Literal
 
 from deep_agents_from_scratch.prompts import SUMMARIZE_WEB_SEARCH
 from deep_agents_from_scratch.state import DeepAgentState
@@ -51,7 +51,6 @@ def run_tavily_search(
     Returns:
         Search results dictionary
     """
-
     result = tavily_client.search(
         search_query,
         max_results=max_results,
@@ -84,8 +83,7 @@ def summarize_webpage_content(webpage_content: str) -> Summary:
 
         return summary_and_filename
 
-    except Exception as e:
-        print(f"Failed to summarize webpage: {str(e)}")
+    except Exception:
         # Return a basic summary object on failure
         return Summary(
             filename="search_result.md",
@@ -160,7 +158,6 @@ def tavily_search(
     Returns:
         Command that saves full results to files and provides minimal summary
     """
-
     # Execute search
     search_results = run_tavily_search(
         query,
@@ -180,9 +177,6 @@ def tavily_search(
     for i, result in enumerate(processed_results):
         # Use the AI-generated filename from summarization
         filename = result['filename']
-
-        # Get raw content
-        raw_content = result['raw_content']
 
         # Create file content with full details
         file_content = f"""# Search Result: {result['title']}

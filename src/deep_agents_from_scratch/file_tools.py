@@ -8,15 +8,15 @@ from langgraph.types import Command
 
 from deep_agents_from_scratch.prompts import (
     LS_DESCRIPTION,
-    READ_FILE_DESCRIPTION, 
+    READ_FILE_DESCRIPTION,
     WRITE_FILE_DESCRIPTION,
 )
 from deep_agents_from_scratch.state import DeepAgentState
 
+
 @tool(description=LS_DESCRIPTION)
 def ls(state: Annotated[DeepAgentState, InjectedState]) -> list[str]:
     """List all files in the virtual filesystem."""
-
     return list(state.get("files", {}).keys())
 
 @tool(description=READ_FILE_DESCRIPTION)

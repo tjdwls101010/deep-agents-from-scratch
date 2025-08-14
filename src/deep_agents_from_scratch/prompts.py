@@ -33,21 +33,16 @@ WRITE_TODOS_DESCRIPTION = """Create and manage structured task lists for trackin
 ## Returns
 Updates agent state with new todo list."""
 
-TODO_USAGE_INSTRUCTIONS = """You can use a structured TODO lists to stay organized and focused on the user's request.
+TODO_USAGE_INSTRUCTIONS = """Based upon the user's request:                                                                                 │
+1. Use the write_todos tool to create TODO at the start of a user request, per the tool description.           
+2. After you accomplish a TODO, use the read_todos to read the TODOs in order to remind yourself of the plan.  
+3. Reflect on what you've done and the TODO.                                                                   
+4. Mark you task as completed, and proceed to the next TODO.                                                   
+5. Continue this process until you have completed all TODOs.   
 
-## Workflow Process
-1. **Initialize**: Create a TODO list at the start of complex user requests using write_todos
-2. **Work**: Focus on one task at a time, marking it as in_progress before starting
-3. **Review**: After completing each task, use read_todos to review your current plan
-4. **Reflect**: Consider what you've accomplished and what remains to be done
-5. **Update**: Mark completed tasks as done and proceed to the next pending task
-6. **Iterate**: Continue this cycle until all TODOs are completed
-
-## Key Principles
-- Only one task should be in_progress at any time
-- Always mark tasks completed immediately when finished
-- Use read_todos regularly to maintain awareness of your overall progress
-- Update the TODO list if new tasks emerge during execution"""
+IMPORTANT: Always create a research plan of TODOs and conduct research following the above guidelines for ANY user request.
+IMPORTANT: Aim to batch research tasks into a *single TODO* in order to minimize the number of TODOs you have to keep track of.
+"""
 
 LS_DESCRIPTION = """List all files in the virtual filesystem stored in agent state.
 
@@ -83,6 +78,32 @@ FILE_USAGE_INSTRUCTIONS = """You have access to a virtual file system to help yo
 2. **Save**: Use write_file() to store the user's request so that we can keep it for later 
 3. **Research**: Proceed with research. The search tool will write files.  
 4. **Read**: Once you are satisfied with the collected sources, read the files and use them to answer the user's question directly.
+"""
+
+SUMMARIZE_WEB_SEARCH = """You are creating a minimal summary for research steering - your goal is to help an agent know what information it has collected, NOT to preserve all details.
+
+<webpage_content>
+{webpage_content}
+</webpage_content>
+
+Create a VERY CONCISE summary focusing on:
+1. Main topic/subject in 1-2 sentences
+2. Key information type (facts, tutorial, news, analysis, etc.)  
+3. Most significant 1-2 findings or points
+
+Keep the summary under 150 words total. The agent needs to know what's in this file to decide if it should search for more information or use this source.
+
+Generate a descriptive filename that indicates the content type and topic (e.g., "mcp_protocol_overview.md", "ai_safety_research_2024.md").
+
+Output format:
+```json
+{{
+   "filename": "descriptive_filename.md",
+   "summary": "Very brief summary under 150 words focusing on main topic and key findings"
+}}
+```
+
+Today's date: {date}
 """
 
 RESEARCHER_INSTRUCTIONS =  """You are a research assistant conducting research on the user's input topic. For context, today's date is {date}.
@@ -131,18 +152,58 @@ After each search tool call, use think_tool to analyze the results:
 </Show Your Thinking>
 """
 
-TASK_DESCRIPTION_PREFIX = """Launch a new agent to handle complex, multi-step tasks autonomously. Available agent types and the tools they have access to:
+TASK_DESCRIPTION_PREFIX = """Delegate a task to a specialized sub-agent with isolated context. Available agents for delegation are:
 {other_agents}
 """
 
-AGENT_SYSTEM_PROMPT = """You are a research supervisor with access to file management and task delegation capabilities. For context, today's date is {date}.
+SUBAGENT_USAGE_INSTRUCTIONS = """You can delegate tasks to sub-agents.
 
 <Task>
-Your role is to coordinate research by delegating tasks to specialized sub-agents and managing research artifacts through a virtual file system. You should delegate specific research tasks and organize findings systematically.
+Your role is to coordinate research by delegating specific research tasks to sub-agents.
 </Task>
 
 <Available Tools>
+1. **task(description, subagent_type)**: Delegate research tasks to specialized sub-agents
+   - description: Clear, specific research question or task
+   - subagent_type: Type of agent to use (e.g., "research-agent")
+2. **think_tool(reflection)**: Reflect on the results of each delegated task and plan next steps.
+   - reflection: Your detailed reflection on the results of the task and next steps.
 
+**PARALLEL RESEARCH**: When you identify multiple independent research directions, make multiple **task** tool calls in a single response to enable parallel execution. Use at most {max_concurrent_research_units} parallel agents per iteration.
+</Available Tools>
+
+<Hard Limits>
+**Task Delegation Budgets** (Prevent excessive delegation):
+- **Bias towards focused research** - Use single agent for simple questions, multiple only when clearly beneficial or when you have multiple independent research directions based on the user's request.
+- **Stop when adequate** - Don't over-research; stop when you have sufficient information
+- **Limit iterations** - Stop after {max_researcher_iterations} task delegations if you haven't found adequate sources
+</Hard Limits>
+
+<Scaling Rules>
+**Simple fact-finding, lists, and rankings** can use a single sub-agent:
+- *Example*: "List the top 10 coffee shops in San Francisco" → Use 1 sub-agent, store in `findings_coffee_shops.md`
+
+**Comparisons** can use a sub-agent for each element of the comparison:
+- *Example*: "Compare OpenAI vs. Anthropic vs. DeepMind approaches to AI safety" → Use 3 sub-agents
+- Store findings in separate files: `findings_openai_safety.md`, `findings_anthropic_safety.md`, `findings_deepmind_safety.md`
+
+**Multi-faceted research** can use parallel agents for different aspects:
+- *Example*: "Research renewable energy: costs, environmental impact, and adoption rates" → Use 3 sub-agents
+- Organize findings by aspect in separate files
+
+**Important Reminders:**
+- Each **task** call creates a dedicated research agent with isolated context
+- Sub-agents can't see each other's work - provide complete standalone instructions
+- Use clear, specific language - avoid acronyms or abbreviations in task descriptions
+</Scaling Rules>"""
+
+DEEP_AGENT_INSTRUCTIONS = """You can delegate tasks to sub-agents.
+
+<Task>
+Your role is to coordinate research by delegating specific research tasks to specialized sub-agents.
+</Task>
+
+<Available Tools>
 1. **task(description, subagent_type)**: Delegate research tasks to specialized sub-agents
    - description: Clear, specific research question or task
    - subagent_type: Type of agent to use (e.g., "research-agent")
@@ -228,28 +289,6 @@ Use systematic file naming for research artifacts:
 - Your role is information gathering and organization - not final report writing
 </Scaling Rules>"""
 
-SUMMARIZE_WEB_SEARCH = """You are creating a minimal summary for research steering - your goal is to help an agent know what information it has collected, NOT to preserve all details.
 
-<webpage_content>
-{webpage_content}
-</webpage_content>
 
-Create a VERY CONCISE summary focusing on:
-1. Main topic/subject in 1-2 sentences
-2. Key information type (facts, tutorial, news, analysis, etc.)  
-3. Most significant 1-2 findings or points
 
-Keep the summary under 150 words total. The agent needs to know what's in this file to decide if it should search for more information or use this source.
-
-Generate a descriptive filename that indicates the content type and topic (e.g., "mcp_protocol_overview.md", "ai_safety_research_2024.md").
-
-Output format:
-```json
-{{
-   "filename": "descriptive_filename.md",
-   "summary": "Very brief summary under 150 words focusing on main topic and key findings"
-}}
-```
-
-Today's date: {date}
-"""

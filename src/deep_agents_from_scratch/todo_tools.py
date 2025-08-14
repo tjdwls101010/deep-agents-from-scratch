@@ -1,5 +1,6 @@
 
 from typing import Annotated
+
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import InjectedToolCallId, tool
 from langgraph.prebuilt import InjectedState
@@ -7,6 +8,7 @@ from langgraph.types import Command
 
 from deep_agents_from_scratch.prompts import WRITE_TODOS_DESCRIPTION
 from deep_agents_from_scratch.state import DeepAgentState, Todo
+
 
 @tool(description=WRITE_TODOS_DESCRIPTION)
 def write_todos(

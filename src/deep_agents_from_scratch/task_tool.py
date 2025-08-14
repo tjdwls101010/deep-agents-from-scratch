@@ -1,9 +1,4 @@
 
-"""Task delegation tool for creating and managing sub-agents with context isolation.
-
-This module implements the core pattern for spawning specialized sub-agents with
-isolated contexts, preventing context clash in complex multi-step tasks.
-"""
 from typing import Annotated, NotRequired, TypedDict
 
 from langchain_core.messages import ToolMessage
