@@ -18,6 +18,7 @@ dependencies = [
 "tavily-python>=0.5.0",
 "httpx>=0.28.1",
 "markdownify>=1.2.0",
+"deepagents>=0.0.3",
 ]
 
 [project.optional-dependencies]

@@ -2,7 +2,15 @@
 
 <img width="720" height="289" alt="Screenshot 2025-08-12 at 2 13 54 PM" src="https://github.com/user-attachments/assets/90e5a7a3-7e88-4cbe-98f6-5b2581c94036" />
 
-#TODO(Geoff): Fill out
+[Deep Research](https://academy.langchain.com/courses/deep-research-with-langgraph) broke out as one of the first major agent use-cases along with coding. Now, we've seeing an emergence of general purpose agents that can be used for a wide range of tasks. For example, [Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) has gained significant attention and popularity for long-horizon tasks; the average Manus task uses ~50 tool calls!. As a second example, Claude Code is being used generally for tasks beyond coding. 
+
+We've done a deep review of the [context engineering patterns](https://docs.google.com/presentation/d/16aaXLu40GugY-kOpqDU4e-S0hD1FmHcNyF0rRRnb1OU/edit?slide=id.p#slide=id.p) across these popular "deep" agents. Some of the key patterns are:
+
+* **task planning (e.g., TODO), often with recitation**
+* **context offloading to file systems**
+* **context isolation through sub-agent delegation**
+
+This course will show how to implement these patterns from scratch using LangGraph! 
 
 ## 🚀 Quickstart 
 
@@ -62,3 +70,37 @@ uv run jupyter notebook
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 jupyter notebook
 ```
+
+## 📚 Tutorial Overview
+
+This repository contains four progressive notebooks that teach you to build advanced AI agents:
+
+### 1. `1_todo.ipynb` - Task Planning Foundations
+Learn to implement structured task planning using TODO lists. This notebook introduces:
+- Task tracking with status management (pending/in_progress/completed)  
+- Progress monitoring and context management
+- The `write_todos()` tool for organizing complex multi-step workflows
+- Best practices for maintaining focus and preventing task drift
+
+### 2. `2_files.ipynb` - Virtual File Systems
+Implement a virtual file system stored in agent state for context offloading:
+- File operations: `ls()`, `read_file()`, `write_file()`, `edit_file()`
+- Context management through information persistence
+- Enabling agent "memory" across conversation turns
+- Reducing token usage by storing detailed information in files
+
+### 3. `3_subagents.ipynb` - Context Isolation
+Master sub-agent delegation for handling complex workflows:
+- Creating specialized sub-agents with focused tool sets
+- Context isolation to prevent confusion and task interference
+- The `task()` delegation tool and agent registry patterns
+- Parallel execution capabilities for independent research streams
+
+### 4. `4_full_agent.ipynb` - Complete Research Agent
+Combine all techniques into a production-ready research agent:
+- Integration of TODOs, files, and sub-agents
+- Real web search with intelligent context offloading
+- Content summarization and strategic thinking tools
+- Complete workflow for complex research tasks with LangGraph Studio integration
+
+Each notebook builds on the previous concepts, culminating in a sophisticated agent architecture capable of handling real-world research and analysis tasks. 

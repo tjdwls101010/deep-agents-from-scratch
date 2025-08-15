@@ -1,3 +1,9 @@
+"""Task delegation tools for context isolation through sub-agents.
+
+This module provides the core infrastructure for creating and managing sub-agents
+with isolated contexts. Sub-agents prevent context clash by operating with clean
+context windows containing only their specific task description.
+"""
 
 from typing import Annotated, NotRequired, TypedDict
 
@@ -12,10 +18,12 @@ from deep_agents_from_scratch.state import DeepAgentState
 
 class SubAgent(TypedDict):
     """Configuration for a specialized sub-agent."""
+
     name: str
     description: str
     prompt: str
     tools: NotRequired[list[str]]
+
 
 def _create_task_tool(tools, subagents: list[SubAgent], model, state_schema):
     """Create a task delegation tool that enables context isolation through sub-agents.
@@ -33,7 +41,7 @@ def _create_task_tool(tools, subagents: list[SubAgent], model, state_schema):
         A 'task' tool that can delegate work to specialized sub-agents
     """
     # Create agent registry
-    agents = {} 
+    agents = {}
 
     # Build tool name mapping for selective tool assignment
     tools_by_name = {}

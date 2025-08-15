@@ -1,3 +1,8 @@
+"""Virtual file system tools for agent state management.
+
+This module provides tools for managing a virtual filesystem stored in agent state,
+enabling context offloading and information persistence across agent interactions.
+"""
 
 from typing import Annotated
 
@@ -19,6 +24,7 @@ def ls(state: Annotated[DeepAgentState, InjectedState]) -> list[str]:
     """List all files in the virtual filesystem."""
     return list(state.get("files", {}).keys())
 
+
 @tool(description=READ_FILE_DESCRIPTION)
 def read_file(
     file_path: str,
@@ -26,7 +32,17 @@ def read_file(
     offset: int = 0,
     limit: int = 2000,
 ) -> str:
+    """Read file content from virtual filesystem with optional offset and limit.
 
+    Args:
+        file_path: Path to the file to read
+        state: Agent state containing virtual filesystem
+        offset: Line number to start reading from (default: 0)
+        limit: Maximum number of lines to read (default: 2000)
+
+    Returns:
+        Formatted file content with line numbers, or error message if file not found
+    """
     files = state.get("files", {})
     if file_path not in files:
         return f"Error: File '{file_path}' not found"
@@ -45,9 +61,10 @@ def read_file(
     result_lines = []
     for i in range(start_idx, end_idx):
         line_content = lines[i][:2000]  # Truncate long lines
-        result_lines.append(f"{i+1:6d}\t{line_content}")
+        result_lines.append(f"{i + 1:6d}\t{line_content}")
 
     return "\n".join(result_lines)
+
 
 @tool(description=WRITE_FILE_DESCRIPTION)
 def write_file(
@@ -56,7 +73,17 @@ def write_file(
     state: Annotated[DeepAgentState, InjectedState],
     tool_call_id: Annotated[str, InjectedToolCallId],
 ) -> Command:
+    """Write content to a file in the virtual filesystem.
 
+    Args:
+        file_path: Path where the file should be created/updated
+        content: Content to write to the file
+        state: Agent state containing virtual filesystem
+        tool_call_id: Tool call identifier for message response
+
+    Returns:
+        Command to update agent state with new file content
+    """
     files = state.get("files", {})
     files[file_path] = content
     return Command(

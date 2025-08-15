@@ -483,6 +483,7 @@ name = "deep-agents-from-scratch"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "deepagents" },
     { name = "httpx" },
     { name = "ipykernel" },
     { name = "jupyter" },
@@ -507,6 +508,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "deepagents", specifier = ">=0.0.3" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "ipykernel", specifier = ">=6.20.0" },
     { name = "jupyter", specifier = ">=1.0.0" },
@@ -525,6 +527,20 @@ requires-dist = [
     { name = "tavily-python", specifier = ">=0.5.0" },
 ]
 provides-extras = ["dev"]
+
+[[package]]
+name = "deepagents"
+version = "0.0.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "langchain" },
+    { name = "langchain-anthropic" },
+    { name = "langgraph" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bb/c2/3f991c1c38c769a26e44684ca94f8aaa4df26e156d99098a3386bf4fefed/deepagents-0.0.3.tar.gz", hash = "sha256:b381c03bfd2b0c29a3646b58e02cfab1ae55c2c05ff1dcd11df0690b5b014933", size = 14371, upload-time = "2025-07-31T14:21:10.106Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f5/9b/226c9d9cc58e194b53142873f354bc7d4f7cbd033a699f67242ef731dae0/deepagents-0.0.3-py3-none-any.whl", hash = "sha256:bbccce588ef634a1a954e95e4daacd1a56432c52da50b50db50ed6456856bb29", size = 16150, upload-time = "2025-07-31T14:21:09.315Z" },
+]
 
 [[package]]
 name = "defusedxml"
