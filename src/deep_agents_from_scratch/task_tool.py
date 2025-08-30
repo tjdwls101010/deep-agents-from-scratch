@@ -1,3 +1,4 @@
+
 """Task delegation tools for context isolation through sub-agents.
 
 This module provides the core infrastructure for creating and managing sub-agents
@@ -5,7 +6,8 @@ with isolated contexts. Sub-agents prevent context clash by operating with clean
 context windows containing only their specific task description.
 """
 
-from typing import Annotated, NotRequired, TypedDict
+from typing import Annotated, NotRequired
+from typing_extensions import TypedDict
 
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import BaseTool, InjectedToolCallId, tool
