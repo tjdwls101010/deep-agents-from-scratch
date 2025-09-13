@@ -71,30 +71,36 @@ jupyter notebook
 
 ## 📚 Tutorial Overview
 
-This repository contains four progressive notebooks that teach you to build advanced AI agents:
+This repository contains five progressive notebooks that teach you to build advanced AI agents:
 
-### 1. `1_todo.ipynb` - Task Planning Foundations
+### `0_create_agent.ipynb -
+Learn how to use the create_agent component. This component,
+- implements a ReAct (Reason - Act) loop that forms the foundation for many agents.
+- is easy to use and quick to set up.
+- serves as the
+
+### `1_todo.ipynb` - Task Planning Foundations
 Learn to implement structured task planning using TODO lists. This notebook introduces:
 - Task tracking with status management (pending/in_progress/completed)  
 - Progress monitoring and context management
 - The `write_todos()` tool for organizing complex multi-step workflows
 - Best practices for maintaining focus and preventing task drift
 
-### 2. `2_files.ipynb` - Virtual File Systems
+### `2_files.ipynb` - Virtual File Systems
 Implement a virtual file system stored in agent state for context offloading:
 - File operations: `ls()`, `read_file()`, `write_file()`, `edit_file()`
 - Context management through information persistence
 - Enabling agent "memory" across conversation turns
 - Reducing token usage by storing detailed information in files
 
-### 3. `3_subagents.ipynb` - Context Isolation
+### `3_subagents.ipynb` - Context Isolation
 Master sub-agent delegation for handling complex workflows:
 - Creating specialized sub-agents with focused tool sets
 - Context isolation to prevent confusion and task interference
 - The `task()` delegation tool and agent registry patterns
 - Parallel execution capabilities for independent research streams
 
-### 4. `4_full_agent.ipynb` - Complete Research Agent
+### `4_full_agent.ipynb` - Complete Research Agent
 Combine all techniques into a production-ready research agent:
 - Integration of TODOs, files, and sub-agents
 - Real web search with intelligent context offloading
