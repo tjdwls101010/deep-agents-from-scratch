@@ -73,7 +73,7 @@ jupyter notebook
 
 This repository contains five progressive notebooks that teach you to build advanced AI agents:
 
-### `0_create_agent.ipynb -
+### `0_create_agent.ipynb` -
 Learn how to use the create_agent component. This component,
 - implements a ReAct (Reason - Act) loop that forms the foundation for many agents.
 - is easy to use and quick to set up.
