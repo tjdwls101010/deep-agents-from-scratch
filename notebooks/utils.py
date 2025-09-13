@@ -24,7 +24,7 @@ def format_message_content(message):
                 parts.append(item["text"])
             elif item.get("type") == "tool_use":
                 parts.append(f"\n🔧 Tool Call: {item['name']}")
-                parts.append(f"   Args: {json.dumps(item['input'], indent=2)}")
+                parts.append(f"   Args: {json.dumps(item['input'], indent=2, ensure_ascii=False)}")
                 parts.append(f"   ID: {item.get('id', 'N/A')}")
                 tool_calls_processed = True
     else:
@@ -38,7 +38,7 @@ def format_message_content(message):
     ):
         for tool_call in message.tool_calls:
             parts.append(f"\n🔧 Tool Call: {tool_call['name']}")
-            parts.append(f"   Args: {json.dumps(tool_call['args'], indent=2)}")
+            parts.append(f"   Args: {json.dumps(tool_call['args'], indent=2, ensure_ascii=False)}")
             parts.append(f"   ID: {tool_call['id']}")
 
     return "\n".join(parts)
@@ -92,3 +92,27 @@ def show_prompt(prompt_text: str, title: str = "Prompt", border_style: str = "bl
             padding=(1, 2),
         )
     )
+
+# more expressive runner
+async def stream_agent(agent, query, config=None):
+    async for graph_name, stream_mode, event in agent.astream(
+        query,
+        stream_mode=["updates", "values"], 
+        subgraphs=True,
+        config=config
+    ):
+        if stream_mode == "updates":
+            print(f'Graph: {graph_name if len(graph_name) > 0 else "root"}')
+            
+            node, result = list(event.items())[0]
+            print(f'Node: {node}')
+            
+            for key in result.keys():
+                if "messages" in key:
+                    # print(f"Messages key: {key}")
+                    format_messages(result[key])
+                    break
+        elif stream_mode == "values":
+            current_state = event
+
+    return current_state
