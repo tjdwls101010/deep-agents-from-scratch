@@ -33,12 +33,12 @@ WRITE_TODOS_DESCRIPTION = """Create and manage structured task lists for trackin
 ## Returns
 Updates agent state with new todo list."""
 
-TODO_USAGE_INSTRUCTIONS = """Based upon the user's request:                                                                                 │
-1. Use the write_todos tool to create TODO at the start of a user request, per the tool description.           
-2. After you accomplish a TODO, use the read_todos to read the TODOs in order to remind yourself of the plan.  
-3. Reflect on what you've done and the TODO.                                                                   
-4. Mark you task as completed, and proceed to the next TODO.                                                   
-5. Continue this process until you have completed all TODOs.   
+TODO_USAGE_INSTRUCTIONS = """Based upon the user's request:
+1. Use the write_todos tool to create TODO at the start of a user request, per the tool description.
+2. After you accomplish a TODO, use the read_todos to read the TODOs in order to remind yourself of the plan. 
+3. Reflect on what you've done and the TODO.
+4. Mark you task as completed, and proceed to the next TODO.
+5. Continue this process until you have completed all TODOs.
 
 IMPORTANT: Always create a research plan of TODOs and conduct research following the above guidelines for ANY user request.
 IMPORTANT: Aim to batch research tasks into a *single TODO* in order to minimize the number of TODOs you have to keep track of.
@@ -133,8 +133,9 @@ Think like a human researcher with limited time. Follow these steps:
 
 <Hard Limits>
 **Tool Call Budgets** (Prevent excessive searching):
-- **Simple queries**: Use 2-3 search tool calls maximum
-- **Complex queries**: Use up to 5 search tool calls maximum
+- **Simple queries**: Use 1-2 search tool calls maximum
+- **Normal queries**: Use 2-3 search tool calls maximum
+- **Very Complex queries**: Use up to 5 search tool calls maximum
 - **Always stop**: After 5 search tool calls if you cannot find the right sources
 
 **Stop Immediately When**:

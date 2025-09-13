@@ -1,4 +1,3 @@
-
 """Task delegation tools for context isolation through sub-agents.
 
 This module provides the core infrastructure for creating and managing sub-agents

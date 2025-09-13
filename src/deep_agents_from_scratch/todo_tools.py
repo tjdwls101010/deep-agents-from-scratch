@@ -16,7 +16,7 @@ from deep_agents_from_scratch.prompts import WRITE_TODOS_DESCRIPTION
 from deep_agents_from_scratch.state import DeepAgentState, Todo
 
 
-@tool(description=WRITE_TODOS_DESCRIPTION)
+@tool(description=WRITE_TODOS_DESCRIPTION,parse_docstring=True)
 def write_todos(
     todos: list[Todo], tool_call_id: Annotated[str, InjectedToolCallId]
 ) -> Command:

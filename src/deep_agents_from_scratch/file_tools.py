@@ -25,7 +25,7 @@ def ls(state: Annotated[DeepAgentState, InjectedState]) -> list[str]:
     return list(state.get("files", {}).keys())
 
 
-@tool(description=READ_FILE_DESCRIPTION)
+@tool(description=READ_FILE_DESCRIPTION, parse_docstring=True)
 def read_file(
     file_path: str,
     state: Annotated[DeepAgentState, InjectedState],
@@ -36,7 +36,7 @@ def read_file(
 
     Args:
         file_path: Path to the file to read
-        state: Agent state containing virtual filesystem
+        state: Agent state containing virtual filesystem (injected in tool node)
         offset: Line number to start reading from (default: 0)
         limit: Maximum number of lines to read (default: 2000)
 
@@ -66,7 +66,7 @@ def read_file(
     return "\n".join(result_lines)
 
 
-@tool(description=WRITE_FILE_DESCRIPTION)
+@tool(description=WRITE_FILE_DESCRIPTION, parse_docstring=True)
 def write_file(
     file_path: str,
     content: str,
@@ -78,7 +78,7 @@ def write_file(
     Args:
         file_path: Path where the file should be created/updated
         content: Content to write to the file
-        state: Agent state containing virtual filesystem
+        state: Agent state containing virtual filesystem (injected in tool node)
         tool_call_id: Tool call identifier for message response
 
     Returns:
