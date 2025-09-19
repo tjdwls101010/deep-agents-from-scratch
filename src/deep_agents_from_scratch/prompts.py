@@ -9,7 +9,7 @@ WRITE_TODOS_DESCRIPTION = """Create and manage structured task lists for trackin
 ## When to Use
 - Multi-step or non-trivial tasks requiring coordination
 - When user provides multiple tasks or explicitly requests todo list  
-- Avoid for single, trivial actions
+- Avoid for single, trivial actions unless directed otherwise
 
 ## Structure
 - Maintain one list containing multiple todo objects (content, status, id)
@@ -69,7 +69,7 @@ Parameters:
 - file_path (required): Path where the file should be created/overwritten
 - content (required): The complete content to write to the file
 
-Important: This replaces the entire file content. Use edit_file for partial modifications."""
+Important: This replaces the entire file content."""
 
 FILE_USAGE_INSTRUCTIONS = """You have access to a virtual file system to help you retain and save context.
 
