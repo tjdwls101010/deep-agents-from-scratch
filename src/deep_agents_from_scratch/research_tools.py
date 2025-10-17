@@ -22,8 +22,9 @@ from deep_agents_from_scratch.prompts import SUMMARIZE_WEB_SEARCH
 from deep_agents_from_scratch.state import DeepAgentState
 
 # 📝 웹페이지 내용을 요약하는 데 사용할 모델을 설정합니다.
+# 여기서는 가볍고 빠른 모델을 사용하여 비용과 속도를 최적화해요!
 summarization_model = init_chat_model(model="google_genai:gemini-2.5-flash")
-# 🔍 Tavily API 클라이언트를 초기화합니다.
+# 🔍 Tavily API 클라이언트를 초기화합니다. AI 에이전트를 위한 똑똑한 검색 엔진이죠.
 tavily_client = TavilyClient()
 
 class Summary(BaseModel):
@@ -52,7 +53,7 @@ def run_tavily_search(
 	Returns:
 		검색 결과 딕셔너리를 반환합니다.
 	"""
-	# 🕵️‍♂️ Tavily 검색을 실행합니다.
+	# 🕵️‍♂️ Tavily 검색을 실행하여 웹에서 정보를 찾아옵니다.
 	result = tavily_client.search(
 		search_query,
 		max_results=max_results,
@@ -72,10 +73,10 @@ def summarize_webpage_content(webpage_content: str) -> Summary:
 		파일명과 요약이 포함된 Summary 객체를 반환합니다.
 	"""
 	try:
-		# ✨ 요약을 위해 구조화된 출력 모델을 설정합니다.
+		# ✨ 요약을 위해 구조화된 출력 모델을 설정합니다. 이렇게 하면 항상 일관된 형식의 결과를 얻을 수 있어요.
 		structured_model = summarization_model.with_structured_output(Summary)
 
-		# 🤖 요약을 생성합니다.
+		# 🤖 요약을 생성합니다. 프롬프트에 오늘 날짜 정보도 함께 넣어주어 최신성을 더합니다.
 		summary_and_filename = structured_model.invoke([
 			HumanMessage(content=SUMMARIZE_WEB_SEARCH.format(
 				webpage_content=webpage_content, 
@@ -86,7 +87,7 @@ def summarize_webpage_content(webpage_content: str) -> Summary:
 		return summary_and_filename
 
 	except Exception:
-		# 🚨 요약 중 오류 발생 시, 기본적인 요약 객체를 반환합니다.
+		# 🚨 만약 요약 과정에서 오류가 발생하면, 기본적인 요약 객체를 대신 반환하여 시스템이 멈추지 않도록 합니다.
 		return Summary(
 			filename="search_result.md",
 			summary=webpage_content[:1000] + "..." if len(webpage_content) > 1000 else webpage_content
@@ -115,18 +116,18 @@ def process_search_results(results: dict) -> list[dict]:
 		response = HTTPX_CLIENT.get(url)
 
 		if response.status_code == 200:
-			# ✅ 성공 시, HTML을 마크다운으로 변환하고 내용을 요약합니다.
+			# ✅ 성공적으로 페이지를 읽었다면, HTML을 마크다운으로 변환하고 내용을 요약합니다.
 			raw_content = markdownify(response.text)
 			summary_obj = summarize_webpage_content(raw_content)
 		else:
-			# ❌ 실패 시, Tavily의 기본 요약을 사용합니다.
+			# ❌ URL을 읽는데 실패했다면, Tavily가 제공하는 기본 요약을 사용합니다.
 			raw_content = result.get('raw_content', '')
 			summary_obj = Summary(
 				filename="URL_error.md",
 				summary=result.get('content', 'URL을 읽는 중 오류 발생; 다른 검색을 시도해보세요.')
 			)
 
-		# 📛 파일 이름 충돌 방지를 위해 고유 ID를 추가합니다.
+		# 📛 파일 이름이 겹치지 않도록 고유한 ID를 생성하여 붙여줍니다.
 		uid = base64.urlsafe_b64encode(uuid.uuid4().bytes).rstrip(b"=").decode("ascii")[:8]
 		name, ext = os.path.splitext(summary_obj.filename)
 		summary_obj.filename = f"{name}_{uid}{ext}"
@@ -202,7 +203,7 @@ def tavily_search(
 		saved_files.append(filename)
 		summaries.append(f"- {filename}: {result['summary']}...")
 
-	# 📝 도구 메시지를 위한 최소한의 요약을 생성합니다.
+	# 📝 도구 메시지를 위한 최소한의 요약을 생성합니다. 무엇을 수집했는지에 초점을 맞춥니다.
 	summary_text = f"""🔍 '{query}'에 대한 {len(processed_results)}개의 결과를 찾았습니다:
 
 {chr(10).join(summaries)}

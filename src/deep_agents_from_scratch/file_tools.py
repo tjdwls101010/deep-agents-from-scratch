@@ -53,18 +53,18 @@ def read_file(
 	files = state.get("files", {})
 	if file_path not in files:
 		# 😟 LLM이 실수를 바로잡을 수 있도록 친절한 오류 메시지를 반환합니다.
-		return f"Error: File '{file_path}' not found"
+		return f"오류: '{file_path}' 파일을 찾을 수 없습니다."
 
 	content = files[file_path]
 	if not content:
-		return "System reminder: File exists but has empty contents"
+		return "시스템 알림: 파일은 존재하지만 내용이 비어 있습니다."
 
 	lines = content.splitlines()
 	start_idx = offset
 	end_idx = min(start_idx + limit, len(lines))
 
 	if start_idx >= len(lines):
-		return f"Error: Line offset {offset} exceeds file length ({len(lines)} lines)"
+		return f"오류: 줄 오프셋 {offset}이 파일 길이({len(lines)}줄)를 초과합니다."
 
 	# `cat -n` 명령어처럼 줄 번호를 붙여서 내용을 반환합니다.
 	result_lines = []
@@ -92,7 +92,7 @@ def write_file(
 		tool_call_id: 메시지 응답을 위한 도구 호출 식별자 (도구 노드에서 주입)
 
 	Returns:
-		새 파일 내용으로 에이전트 상태를 업데이트하는 Command
+		새 파일 내용로 에이전트 상태를 업데이트하는 Command
 	"""
 	files = state.get("files", {})
 	# 파일 딕셔너리에 새로운 내용을 추가(또는 덮어쓰기)합니다.
@@ -102,7 +102,7 @@ def write_file(
 		update={
 			"files": files,
 			"messages": [
-				ToolMessage(f"Updated file {file_path}", tool_call_id=tool_call_id)
+				ToolMessage(f"{file_path} 파일이 업데이트되었습니다.", tool_call_id=tool_call_id)
 			],
 		}
 	)

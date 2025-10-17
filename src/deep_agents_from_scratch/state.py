@@ -66,3 +66,4 @@ class DeepAgentState(AgentState):
 	todos: NotRequired[list[Todo]]
 	# `Annotated`를 사용하여 `files` 필드가 업데이트될 때 `file_reducer` 함수를 사용하도록 지정합니다.
 	files: Annotated[NotRequired[dict[str, str]], file_reducer]
+	remaining_steps: NotRequired[int]
