@@ -1,7 +1,7 @@
-"""Research Tools.
+"""연구 도구 모음입니다.
 
-This module provides search and content processing utilities for the research agent,
-including web search capabilities and content summarization tools.
+이 모듈은 연구 에이전트를 위한 검색 및 콘텐츠 처리 유틸리티를 제공합니다.
+웹 검색 기능과 콘텐츠 요약 도구 등이 포함되어 있습니다.
 """
 import os
 from datetime import datetime
@@ -21,17 +21,19 @@ from typing_extensions import Annotated, Literal
 from deep_agents_from_scratch.prompts import SUMMARIZE_WEB_SEARCH
 from deep_agents_from_scratch.state import DeepAgentState
 
-# Summarization model 
+# 📝 웹페이지 내용을 요약하는 데 사용할 모델을 설정합니다.
+# 여기서는 가볍고 빠른 모델을 사용하여 비용과 속도를 최적화해요!
 summarization_model = init_chat_model(model="google_genai:gemini-2.5-flash")
+# 🔍 Tavily API 클라이언트를 초기화합니다. AI 에이전트를 위한 똑똑한 검색 엔진이죠.
 tavily_client = TavilyClient()
 
 class Summary(BaseModel):
-	"""Schema for webpage content summarization."""
-	filename: str = Field(description="Name of the file to store.")
-	summary: str = Field(description="Key learnings from the webpage.")
+	"""웹페이지 콘텐츠 요약을 위한 스키마입니다."""
+	filename: str = Field(description="저장할 파일의 이름입니다.")
+	summary: str = Field(description="웹페이지의 핵심 학습 내용입니다.")
 
 def get_today_str() -> str:
-	"""Get current date in a human-readable format."""
+	"""사람이 읽기 쉬운 형식으로 현재 날짜를 가져옵니다."""
 	return datetime.now().strftime("%a %b %-d, %Y")
 
 def run_tavily_search(
@@ -40,17 +42,18 @@ def run_tavily_search(
 	topic: Literal["general", "news", "finance"] = "general", 
 	include_raw_content: bool = True, 
 ) -> dict:
-	"""Perform search using Tavily API for a single query.
+	"""단일 쿼리에 대해 Tavily API를 사용하여 검색을 수행합니다.
 
 	Args:
-		search_query: Search query to execute
-		max_results: Maximum number of results per query
-		topic: Topic filter for search results
-		include_raw_content: Whether to include raw webpage content
+		search_query: 실행할 검색 쿼리입니다.
+		max_results: 쿼리당 최대 결과 수입니다.
+		topic: 검색 결과에 대한 주제 필터입니다.
+		include_raw_content: 원시 웹페이지 콘텐츠 포함 여부입니다.
 
 	Returns:
-		Search results dictionary
+		검색 결과 딕셔너리를 반환합니다.
 	"""
+	# 🕵️‍♂️ Tavily 검색을 실행하여 웹에서 정보를 찾아옵니다.
 	result = tavily_client.search(
 		search_query,
 		max_results=max_results,
@@ -61,19 +64,19 @@ def run_tavily_search(
 	return result
 
 def summarize_webpage_content(webpage_content: str) -> Summary:
-	"""Summarize webpage content using the configured summarization model.
+	"""구성된 요약 모델을 사용하여 웹페이지 콘텐츠를 요약합니다.
 
 	Args:
-		webpage_content: Raw webpage content to summarize
+		webpage_content: 요약할 원시 웹페이지 콘텐츠입니다.
 
 	Returns:
-		Summary object with filename and summary
+		파일명과 요약이 포함된 Summary 객체를 반환합니다.
 	"""
 	try:
-		# Set up structured output model for summarization
+		# ✨ 요약을 위해 구조화된 출력 모델을 설정합니다. 이렇게 하면 항상 일관된 형식의 결과를 얻을 수 있어요.
 		structured_model = summarization_model.with_structured_output(Summary)
 
-		# Generate summary
+		# 🤖 요약을 생성합니다. 프롬프트에 오늘 날짜 정보도 함께 넣어주어 최신성을 더합니다.
 		summary_and_filename = structured_model.invoke([
 			HumanMessage(content=SUMMARIZE_WEB_SEARCH.format(
 				webpage_content=webpage_content, 
@@ -84,47 +87,47 @@ def summarize_webpage_content(webpage_content: str) -> Summary:
 		return summary_and_filename
 
 	except Exception:
-		# Return a basic summary object on failure
+		# 🚨 만약 요약 과정에서 오류가 발생하면, 기본적인 요약 객체를 대신 반환하여 시스템이 멈추지 않도록 합니다.
 		return Summary(
 			filename="search_result.md",
 			summary=webpage_content[:1000] + "..." if len(webpage_content) > 1000 else webpage_content
 		)
 
 def process_search_results(results: dict) -> list[dict]:
-	"""Process search results by summarizing content where available.
+	"""사용 가능한 경우 콘텐츠를 요약하여 검색 결과를 처리합니다.
 
 	Args:
-		results: Tavily search results dictionary
+		results: Tavily 검색 결과 딕셔너리입니다.
 
 	Returns:
-		List of processed results with summaries
+		요약이 포함된 처리된 결과 목록을 반환합니다.
 	"""
 	processed_results = []
 
-	# Create a client for HTTP requests
+	# 🌐 HTTP 요청을 위한 클라이언트를 생성합니다.
 	HTTPX_CLIENT = httpx.Client()
 
 	for result in results.get('results', []):
 
-		# Get url 
+		# 🔗 결과에서 URL을 가져옵니다.
 		url = result['url']
 
-		# Read url
+		# 📥 URL의 내용을 읽어옵니다.
 		response = HTTPX_CLIENT.get(url)
 
 		if response.status_code == 200:
-			# Convert HTML to markdown
+			# ✅ 성공적으로 페이지를 읽었다면, HTML을 마크다운으로 변환하고 내용을 요약합니다.
 			raw_content = markdownify(response.text)
 			summary_obj = summarize_webpage_content(raw_content)
 		else:
-			# Use Tavily's generated summary
+			# ❌ URL을 읽는데 실패했다면, Tavily가 제공하는 기본 요약을 사용합니다.
 			raw_content = result.get('raw_content', '')
 			summary_obj = Summary(
 				filename="URL_error.md",
-				summary=result.get('content', 'Error reading URL; try another search.')
+				summary=result.get('content', 'URL을 읽는 중 오류 발생; 다른 검색을 시도해보세요.')
 			)
 
-		# uniquify file names
+		# 📛 파일 이름이 겹치지 않도록 고유한 ID를 생성하여 붙여줍니다.
 		uid = base64.urlsafe_b64encode(uuid.uuid4().bytes).rstrip(b"=").decode("ascii")[:8]
 		name, ext = os.path.splitext(summary_obj.filename)
 		summary_obj.filename = f"{name}_{uid}{ext}"
@@ -147,22 +150,22 @@ def tavily_search(
 	max_results: Annotated[int, InjectedToolArg] = 1,
 	topic: Annotated[Literal["general", "news", "finance"], InjectedToolArg] = "general",
 ) -> Command:
-	"""Search web and save detailed results to files while returning minimal context.
+	"""최소한의 컨텍스트를 반환하면서 상세한 결과를 파일에 저장하고 웹을 검색합니다.
 
-	Performs web search and saves full content to files for context offloading.
-	Returns only essential information to help the agent decide on next steps.
+	웹 검색을 수행하고 전체 콘텐츠를 파일에 저장하여 컨텍스트를 오프로드합니다.
+	에이전트가 다음 단계를 결정하는 데 도움이 되는 필수 정보만 반환합니다.
 
 	Args:
-		query: Search query to execute
-		state: Injected agent state for file storage
-		tool_call_id: Injected tool call identifier
-		max_results: Maximum number of results to return (default: 1)
-		topic: Topic filter - 'general', 'news', or 'finance' (default: 'general')
+		query: 실행할 검색 쿼리입니다.
+		state: 파일 저장을 위한 주입된 에이전트 상태입니다.
+		tool_call_id: 주입된 도구 호출 식별자입니다.
+		max_results: 반환할 최대 결과 수 (기본값: 1) 입니다.
+		topic: 주제 필터 - 'general', 'news', 또는 'finance' (기본값: 'general') 입니다.
 
 	Returns:
-		Command that saves full results to files and provides minimal summary
+		전체 결과를 파일에 저장하고 최소한의 요약을 제공하는 Command를 반환합니다.
 	"""
-	# Execute search
+	# 🚀 검색을 실행합니다.
 	search_results = run_tavily_search(
 		query,
 		max_results=max_results,
@@ -170,43 +173,43 @@ def tavily_search(
 		include_raw_content=True,
 	) 
 
-	# Process and summarize results
+	# 🔄 결과를 처리하고 요약합니다.
 	processed_results = process_search_results(search_results)
 
-	# Save each result to a file and prepare summary
+	# 💾 각 결과를 파일에 저장하고 요약을 준비합니다.
 	files = state.get("files", {})
 	saved_files = []
 	summaries = []
 
 	for i, result in enumerate(processed_results):
-		# Use the AI-generated filename from summarization
+		# AI가 생성한 파일 이름을 사용합니다.
 		filename = result['filename']
 
-		# Create file content with full details
-		file_content = f"""# Search Result: {result['title']}
+		# 📄 전체 세부 정보가 포함된 파일 콘텐츠를 생성합니다.
+		file_content = f"""# 검색 결과: {result['title']}
 
 **URL:** {result['url']}
-**Query:** {query}
-**Date:** {get_today_str()}
+**쿼리:** {query}
+**날짜:** {get_today_str()}
 
-## Summary
+## 요약
 {result['summary']}
 
-## Raw Content
-{result['raw_content'] if result['raw_content'] else 'No raw content available'}
+## 원본 콘텐츠
+{result['raw_content'] if result['raw_content'] else '사용 가능한 원본 콘텐츠 없음'}
 """
 
 		files[filename] = file_content
 		saved_files.append(filename)
 		summaries.append(f"- {filename}: {result['summary']}...")
 
-	# Create minimal summary for tool message - focus on what was collected
-	summary_text = f"""🔍 Found {len(processed_results)} result(s) for '{query}':
+	# 📝 도구 메시지를 위한 최소한의 요약을 생성합니다. 무엇을 수집했는지에 초점을 맞춥니다.
+	summary_text = f"""🔍 '{query}'에 대한 {len(processed_results)}개의 결과를 찾았습니다:
 
 {chr(10).join(summaries)}
 
-Files: {', '.join(saved_files)}
-💡 Use read_file() to access full details when needed."""
+파일: {', '.join(saved_files)}
+💡 필요할 때 `read_file()`을 사용하여 전체 세부 정보에 액세스하세요."""
 
 	return Command(
 		update={
@@ -219,28 +222,28 @@ Files: {', '.join(saved_files)}
 
 @tool(parse_docstring=True)
 def think_tool(reflection: str) -> str:
-	"""Tool for strategic reflection on research progress and decision-making.
+	"""연구 진행 상황 및 의사 결정에 대한 전략적 성찰을 위한 도구입니다.
 
-	Use this tool after each search to analyze results and plan next steps systematically.
-	This creates a deliberate pause in the research workflow for quality decision-making.
+	각 검색 후에 이 도구를 사용하여 결과를 분석하고 다음 단계를 체계적으로 계획하세요.
+	이는 양질의 의사 결정을 위해 연구 워크플로우에 의도적인 멈춤을 만듭니다.
 
-	When to use:
-	- After receiving search results: What key information did I find?
-	- Before deciding next steps: Do I have enough to answer comprehensively?
-	- When assessing research gaps: What specific information am I still missing?
-	- Before concluding research: Can I provide a complete answer now?
-	- How complex is the question: Have I reached the number of search limits?
+	사용 시기:
+	- 검색 결과를 받은 후: 어떤 핵심 정보를 찾았는가?
+	- 다음 단계를 결정하기 전: 포괄적으로 답변하기에 충분한 정보가 있는가?
+	- 연구 격차를 평가할 때: 구체적으로 어떤 정보가 아직 부족한가?
+	- 연구를 마치기 전: 이제 완전한 답변을 제공할 수 있는가?
+	- 질문이 얼마나 복잡한가: 검색 제한 횟수에 도달했는가?
 
-	Reflection should address:
-	1. Analysis of current findings - What concrete information have I gathered?
-	2. Gap assessment - What crucial information is still missing?
-	3. Quality evaluation - Do I have sufficient evidence/examples for a good answer?
-	4. Strategic decision - Should I continue searching or provide my answer?
+	성찰은 다음을 다루어야 합니다:
+	1. 현재 결과 분석 - 어떤 구체적인 정보를 수집했는가?
+	2. 격차 평가 - 어떤 중요한 정보가 여전히 부족한가?
+	3. 품질 평가 - 좋은 답변을 위한 충분한 증거나 예시가 있는가?
+	4. 전략적 결정 - 검색을 계속해야 하는가, 아니면 답변을 제공해야 하는가?
 
 	Args:
-		reflection: Your detailed reflection on research progress, findings, gaps, and next steps
+		reflection: 연구 진행 상황, 결과, 격차 및 다음 단계에 대한 상세한 성찰입니다.
 
 	Returns:
-		Confirmation that reflection was recorded for decision-making
+		의사 결정을 위해 성찰이 기록되었다는 확인 메시지를 반환합니다.
 	"""
-	return f"Reflection recorded: {reflection}"
+	return f"성찰 기록됨: {reflection}"
