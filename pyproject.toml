@@ -4,22 +4,22 @@ version = "0.1.0"
 description = "Build a deep agent from scratch"
 requires-python = ">=3.11"
 dependencies = [
-    "langgraph>=0.6.4",
-    "langchain>=0.3.0",
-    "langchain-openai>=0.2.0",
-    "langchain-anthropic>=0.3.0",
-    "langchain_community>=0.3.27",
-    "langchain_tavily>=0.2.7",
-    "langchain_mcp_adapters>=0.1.9",
-    "pydantic>=2.0.0",
-    "rich>=14.0.0",
-    "jupyter>=1.0.0",
-    "ipykernel>=6.20.0",
-    "tavily-python>=0.5.0",
-    "httpx>=0.28.1",
-    "markdownify>=1.2.0",
-    "deepagents>=0.0.3",
-    "langchain-google-genai>=2.1.12",
+	"langgraph>=0.6.4",
+	"langchain>=0.3.0",
+	"langchain-openai>=0.2.0",
+	"langchain-anthropic>=0.3.0",
+	"langchain_community>=0.3.27",
+	"langchain_tavily>=0.2.7",
+	"langchain_mcp_adapters>=0.1.9",
+	"pydantic>=2.0.0",
+	"rich>=14.0.0",
+	"jupyter>=1.0.0",
+	"ipykernel>=6.20.0",
+	"tavily-python>=0.5.0",
+	"httpx>=0.28.1",
+	"markdownify>=1.2.0",
+	"deepagents>=0.0.3",
+	"langchain-google-genai>=2.1.12",
 ]
 
 [project.optional-dependencies]
@@ -40,20 +40,20 @@ packages = ["deep_agents_from_scratch"]
 
 [tool.ruff]
 lint.select = [
-    "E",    # pycodestyle
-    "F",    # pyflakes
-    "I",    # isort
-    "D",    # pydocstyle
-    "D401", # First line should be in imperative mood
-    "T201",
-    "UP",
+	"E",	# pycodestyle
+	"F",	# pyflakes
+	"I",	# isort
+	"D",	# pydocstyle
+	"D401", # First line should be in imperative mood
+	"T201",
+	"UP",
 ]
 lint.ignore = [
-    "UP006",
-    "UP007",
-    "UP035",
-    "D417",
-    "E501",
+	"UP006",
+	"UP007",
+	"UP035",
+	"D417",
+	"E501",
 ]
 
 [tool.ruff.lint.per-file-ignores]
